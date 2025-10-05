@@ -9,6 +9,7 @@ from routes.building import buildings_bp
 from models.admin import Admin
 from models.building import Building
 from models.residential_complex import ResidentialComplex
+from flask_cors import CORS
 import os
 
 def create_app():
@@ -16,6 +17,8 @@ def create_app():
 
     app.config.from_object("config.Config")
     
+    CORS(app, resources={r"/*": {"origins": "*"}})
+      
     db.init_app(app)
     
     with app.app_context():

@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from models.residential_complex import ResidentialComplex
 from models.admin import Admin
 from extensions import db
+from sqlalchemy import or_
 from utils import token_required
 
 complexes_bp = Blueprint('complexes', __name__, url_prefix='/complexes')
@@ -15,9 +16,12 @@ def get_complexes(current_user):
 
     query = ResidentialComplex.query
     if search:
+        search_pattern = f"%{search}%"
         query = query.filter(
-            ResidentialComplex.identity.like(f"%{search}%") |
-            ResidentialComplex.address.like(f"%{search}%")
+            or_(
+                ResidentialComplex.identity.like(search_pattern),
+                ResidentialComplex.address.like(search_pattern)
+            )
         )
 
     pagination = query.paginate(page=page, per_page=per_page)
